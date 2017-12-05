@@ -45,8 +45,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BasicCryptoMarket.cs" />
+    <Compile Include="BittrexMarket.cs" />
+    <Compile Include="ExmoMarket.cs" />
+    <Compile Include="PairsListOperator.cs" />
+    <Compile Include="ExchangePair.cs" />
+    <Compile Include="PoloniexMarket.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="YobitMarket.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

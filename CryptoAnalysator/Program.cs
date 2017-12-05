@@ -9,112 +9,24 @@ using System.Collections.Generic;
 
 namespace CryptoAnalysator
 {
-    class PairsListOperator
-    {
-        List<ExchangePair> actualPairs = new List<ExchangePair>();
-
-        public void delete_all_pairs()
-        {
-            actualPairs.Clear();
-        }
-
-        public void add_pair(ExchangePair pair)
-        {
-            actualPairs.Add(pair);
-        }
-
-        public void analyse_add_pairs(PoloniexApiRequester poloniex, BittrexApiRequester bittrex)
-        {
-
-        }
-    }
-
-    class ExchangePair
-    {
-        public string pair;
-        public string stockExchangeSeller;
-        public string stockExchangeBuyer;
-        public decimal purchasePrice;
-        public decimal sellPrice;
-    }
-
-    class PoloniexApiRequester
-    {
-        static string basicURL = "https://poloniex.com/public?command=";
-        List<ExchangePair> pairs = new List<ExchangePair>();
-
-        public PoloniexApiRequester()
-        {
-            load_pairs();
-        }
-
-        public void load_pairs()
-        {
-            pairs.Clear();
-
-            string response = Program.get_request(basicURL + "returnTicker");
-            var responseJSON = JObject.Parse(response);
-            foreach (var pair in responseJSON)
-            {
-                ExchangePair exPair = new ExchangePair();
-                exPair.pair = (string)pair.Key.Replace('_', '-');
-                Console.WriteLine(exPair.pair);
-                exPair.purchasePrice = (decimal)pair.Value["lowestAsk"];
-                exPair.sellPrice = (decimal)pair.Value["highestBid"];
-
-                pairs.Add(exPair);
-            }
-        }
-
-        public ExchangePair get_pair_by_name(string name)
-        {
-            return pairs.Find(pairEx => pairEx.pair == name);
-        }
-    }
-
-    class BittrexApiRequester
-    {
-        string basicUrl = "https://bittrex.com/api/v1.1/public/";
-        List<ExchangePair> pairs = new List<ExchangePair>();
-
-        public BittrexApiRequester()
-        {
-            load_pairs();
-        }
-
-        public void load_pairs()
-        {
-            pairs.Clear();
-
-            string response = Program.get_request(basicUrl + "getmarketsummaries");
-            var responseJSON = JObject.Parse(response)["result"];
-
-            foreach (JObject pair in responseJSON)
-            {
-                ExchangePair exPair = new ExchangePair();
-                exPair.pair = (string)pair["MarketName"];
-                exPair.purchasePrice = (decimal)pair["Ask"];
-                exPair.sellPrice = (decimal)pair["Bid"];
-
-                pairs.Add(exPair);
-            }
-        }
-
-        public ExchangePair get_pair_by_name(string name)
-        {
-            return pairs.Find(pairEx => pairEx.pair == name);
-        }
-    }
 
     class Program
     {
         static void Main(string[] args)
         {
 
-            PoloniexApiRequester poloniex = new PoloniexApiRequester();
-            //BittrexApiRequester bittrex = new BittrexApiRequester();
+            PoloniexMarket poloniex = new PoloniexMarket();
+            BittrexMarket bittrex = new BittrexMarket();
+            //YobitMarket yobit = new YobitMarket();
+            ExmoMarket exmo = new ExmoMarket();
 
-            Console.WriteLine(poloniex.get_pair_by_name("ETH-GAS"));
+            //Console.WriteLine(poloniex.get_pair_by_name("ETH-GAS")?.sellPrice);
+
+            PairsListOperator CA = new PairsListOperator();
+
+            CA.analyse_add_pairs(poloniex, bittrex, exmo);
+
+            CA.show_actual_pairs();
 
             Console.ReadKey();
         }
