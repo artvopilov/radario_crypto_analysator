@@ -9,7 +9,8 @@ namespace CryptoAnalysator
 {
     class ExmoMarket: BasicCryptoMarket
     {
-        public ExmoMarket(string url = "https://api.exmo.com/v1/", string command = "ticker") : base(url, command)
+        public ExmoMarket(string url = "https://api.exmo.com/v1/", string command = "ticker",
+            decimal feeTaker = (decimal)0.002, decimal feeMaker = (decimal)0.002) : base(url, command, feeTaker, feeMaker)
         {
         }
 
@@ -21,8 +22,8 @@ namespace CryptoAnalysator
             {
                 ExchangePair exPair = new ExchangePair();
                 exPair.pair = (string)pair.Key.Replace('_', '-');
-                exPair.purchasePrice = (decimal)pair.Value["sell_price"];
-                exPair.sellPrice = (decimal)pair.Value["buy_price"];
+                exPair.purchasePrice = (decimal)pair.Value["sell_price"] * (1 + feeTaker);
+                exPair.sellPrice = (decimal)pair.Value["buy_price"] * (1 - feeMaker);
                 exPair.stockExchangeSeller = "Exmo";
 
                 pairs.Add(exPair);

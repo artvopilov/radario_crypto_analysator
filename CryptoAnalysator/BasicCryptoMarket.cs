@@ -13,7 +13,10 @@ namespace CryptoAnalysator
         protected List<ExchangePair> usdtPairs;
         protected List<ExchangePair> crossRates;
 
-        public BasicCryptoMarket(string url, string command)
+        protected decimal feeTaker;
+        protected decimal feeMaker;
+
+        public BasicCryptoMarket(string url, string command, decimal feeTaker, decimal feeMaker)
         {
             pairs = new List<ExchangePair>();
             usdtPairs = new List<ExchangePair>();

@@ -9,7 +9,8 @@ namespace CryptoAnalysator
 {
     class PoloniexMarket : BasicCryptoMarket
     {
-        public PoloniexMarket(string url = "https://poloniex.com/public?command=", string command = "returnTicker") : base(url, command)
+        public PoloniexMarket(string url = "https://poloniex.com/public?command=", string command = "returnTicker", 
+            decimal feeTaker = (decimal)0.0025, decimal feeMaker = (decimal)0.0015) : base(url, command, feeTaker, feeMaker)
         {
         }
 
@@ -21,8 +22,8 @@ namespace CryptoAnalysator
             {
                 ExchangePair exPair = new ExchangePair();
                 exPair.pair = (string)pair.Key.Replace('_', '-');
-                exPair.purchasePrice = (decimal)pair.Value["lowestAsk"];
-                exPair.sellPrice = (decimal)pair.Value["highestBid"];
+                exPair.purchasePrice = (decimal)pair.Value["lowestAsk"] * (1 + feeTaker);
+                exPair.sellPrice = (decimal)pair.Value["highestBid"] * (1 - feeMaker);
                 exPair.stockExchangeSeller = "Poloniex";
 
                 pairs.Add(exPair);

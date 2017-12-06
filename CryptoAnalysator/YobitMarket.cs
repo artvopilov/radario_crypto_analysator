@@ -9,7 +9,8 @@ namespace CryptoAnalysator
 {
     class YobitMarket : BasicCryptoMarket
     {
-        public YobitMarket(string url = "https://yobit.net/api/3/", string command = "info") : base(url, command)
+        public YobitMarket(string url = "https://yobit.net/api/3/", string command = "info",
+             decimal feeTaker = (decimal)0.0005, decimal feeMaker = (decimal)0.0005) : base(url, command, feeTaker, feeMaker)
         {
         }
 
@@ -25,8 +26,8 @@ namespace CryptoAnalysator
                 ExchangePair exPair = new ExchangePair();
                 exPair.pair = pair.Key.ToUpper().Replace('_', '-');
                 var pairInfo = JObject.Parse(load_pair_info(pair.Key));
-                exPair.purchasePrice = (decimal)pairInfo[pair.Key]["sell"];
-                exPair.sellPrice = (decimal)pairInfo[pair.Key]["buy"];
+                exPair.purchasePrice = (decimal)pairInfo[pair.Key]["sell"] * (1 + feeTaker);
+                exPair.sellPrice = (decimal)pairInfo[pair.Key]["buy"] * (1 - feeMaker);
                 exPair.stockExchangeSeller = "Yobit";
 
                 pairs.Add(exPair);

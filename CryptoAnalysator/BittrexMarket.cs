@@ -8,7 +8,8 @@ namespace CryptoAnalysator
 {
     class BittrexMarket : BasicCryptoMarket
     {
-        public BittrexMarket(string url = "https://bittrex.com/api/v1.1/public/", string command = "getmarketsummaries") : base(url, command)
+        public BittrexMarket(string url = "https://bittrex.com/api/v1.1/public/", string command = "getmarketsummaries",
+            decimal feeTaker = (decimal)0.0025, decimal feeMaker = (decimal)0.0025) : base(url, command, feeTaker, feeMaker)
         {
         }
 
@@ -20,8 +21,8 @@ namespace CryptoAnalysator
             {
                 ExchangePair exPair = new ExchangePair();
                 exPair.pair = (string)pair["MarketName"];
-                exPair.purchasePrice = (decimal)pair["Ask"];
-                exPair.sellPrice = (decimal)pair["Bid"];
+                exPair.purchasePrice = (decimal)pair["Ask"] * (1 + feeTaker);
+                exPair.sellPrice = (decimal)pair["Bid"] * (1 - feeMaker);
                 exPair.stockExchangeSeller = "Bittrex";
 
                 pairs.Add(exPair);
