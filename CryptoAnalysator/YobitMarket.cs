@@ -16,7 +16,6 @@ namespace CryptoAnalysator
         protected override void process_response(string response)
         {
             var responseJSON = JObject.Parse(response)["pairs"].Value<JObject>();
-
             //string request = "";
 
             Console.Write("[INFO] YobitMarket is loading:  ");
@@ -31,14 +30,13 @@ namespace CryptoAnalysator
                 exPair.stockExchangeSeller = "Yobit";
 
                 pairs.Add(exPair);
-                count++;
 
+                count++;
                 if (count % 10 == 0)
                 {
                     Console.Write('>');
                 }
                 //request += pair.Key + '-';
-
             }
             //request = request.Remove(request.Length - 1, 1);
             //Console.WriteLine(load_pair_info(request));

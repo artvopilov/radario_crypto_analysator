@@ -39,7 +39,6 @@ namespace CryptoAnalysator
                     for (int j = i + 1; j < marketsArray.Length; j++)
                     {
                         string name = thatMarketPair.pair;
-
                         ExchangePair anotherMarketPair = marketsArray[j].get_pair_by_name(name) ??
                             marketsArray[j].get_pair_by_name(name.Substring(name.IndexOf('-') + 1) + '-' + name.Substring(0, name.IndexOf('-'))) ??
                             thatMarketPair;
