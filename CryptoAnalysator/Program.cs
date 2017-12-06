@@ -17,20 +17,14 @@ namespace CryptoAnalysator
 
             PoloniexMarket poloniex = new PoloniexMarket();
             BittrexMarket bittrex = new BittrexMarket();
-            YobitMarket yobit = new YobitMarket();
+            //YobitMarket yobit = new YobitMarket();
             ExmoMarket exmo = new ExmoMarket();
 
             Console.WriteLine("\n----- Calculating -----\n");
 
             BasicCryptoMarket[] marketsArray = { poloniex, bittrex, exmo };
-
-            //Console.WriteLine(poloniex.get_pair_by_name("ETH-GAS")?.sellPrice);
-
             PairsListOperator CA = new PairsListOperator();
-            
-        
             CA.analyse_pairs(marketsArray);
-
             CA.show_actual_pairs();
 
             Console.ReadKey();

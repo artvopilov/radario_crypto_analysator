@@ -18,6 +18,7 @@ namespace CryptoAnalysator
             load_pairs(command);
         }
         
+        // Requests crypto markets
         public void load_pairs(string command)
         {
             pairs.Clear();

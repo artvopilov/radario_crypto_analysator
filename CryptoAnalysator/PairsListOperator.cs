@@ -25,6 +25,7 @@ namespace CryptoAnalysator
             actualPairs.Add(pair);
         }
 
+        // Analyses loaded pairs of currencies from different crypto markets and saves actual.
         public void analyse_pairs(BasicCryptoMarket[] marketsArray)
         {
             for (int i = 0; i < marketsArray.Length - 1; i++)
@@ -75,6 +76,7 @@ namespace CryptoAnalysator
             }
         }
 
+        // Shows actual pairs of currencies. If [WARN] label, actual pair maybe wrong or is really good.
         public void show_actual_pairs()
         {
             foreach (ExchangePair pair in actualPairs)
