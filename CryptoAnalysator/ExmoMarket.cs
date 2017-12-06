@@ -26,8 +26,10 @@ namespace CryptoAnalysator
                 exPair.stockExchangeSeller = "Exmo";
 
                 pairs.Add(exPair);
+                check_add_usdt_pair(exPair);
             }
 
+            create_crossRates();
             Console.WriteLine("[INFO] ExmoMarket is ready");
         }
     }

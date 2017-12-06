@@ -26,8 +26,10 @@ namespace CryptoAnalysator
                 exPair.stockExchangeSeller = "Poloniex";
 
                 pairs.Add(exPair);
+                check_add_usdt_pair(exPair);
             }
 
+            create_crossRates();
             Console.WriteLine("[INFO] PoloniexMarket is ready");
         }
     }

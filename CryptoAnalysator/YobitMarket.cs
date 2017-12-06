@@ -30,6 +30,7 @@ namespace CryptoAnalysator
                 exPair.stockExchangeSeller = "Yobit";
 
                 pairs.Add(exPair);
+                check_add_usdt_pair(exPair);
 
                 count++;
                 if (count % 10 == 0)
@@ -40,6 +41,7 @@ namespace CryptoAnalysator
             }
             //request = request.Remove(request.Length - 1, 1);
             //Console.WriteLine(load_pair_info(request));
+            create_crossRates();
             Console.Write('\n');
             Console.WriteLine("[INFO] YobitMarket is ready");
         }
