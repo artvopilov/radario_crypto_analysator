@@ -38,5 +38,11 @@ namespace CryptoAnalysator
         {
             return pairs;
         }
+
+        public void delete_pair_by_name(string name)
+        {
+            pairs.Remove(pairs.Where(pairEx => pairEx.pair == name).First());
+            //pairs.Remove(pairs.Find(pairEx => pairEx.pair == name))
+        }
     }
 }

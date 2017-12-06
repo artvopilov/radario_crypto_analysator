@@ -25,52 +25,53 @@ namespace CryptoAnalysator
             actualPairs.Add(pair);
         }
 
-        public void analyse_add_pairs(PoloniexMarket poloniex, BittrexMarket bittrex, ExmoMarket exmo)
+        public void analyse_pairs(BasicCryptoMarket[] marketsArray)
         {
-            actualPairs.Clear();
-
-            foreach (ExchangePair poloniexPair in poloniex.get_all_pairs_info().OrderBy(i => i.pair).ToList())
+            for (int i = 0; i < marketsArray.Length - 1; i++)
             {
-
-                ExchangePair bittrexPair = bittrex.get_pair_by_name(poloniexPair.pair) ?? poloniexPair;
-                ExchangePair exmoPair = exmo.get_pair_by_name(poloniexPair.pair) ?? poloniexPair;
-                Console.WriteLine(poloniexPair.pair);
-
-                ExchangePair maxSellPricePair;
-                ExchangePair minPurchasePricePair;
-                ExchangePair actualPair = new ExchangePair();
-
-
-                if (poloniexPair.purchasePrice < bittrexPair.purchasePrice)
+                foreach (ExchangePair thatMarketPair in marketsArray[i].get_all_pairs_info())
                 {
-                    minPurchasePricePair = poloniexPair.purchasePrice < exmoPair.purchasePrice ? poloniexPair : exmoPair;
-                }
-                else
-                {
-                    minPurchasePricePair = bittrexPair.purchasePrice < exmoPair.purchasePrice ? bittrexPair : exmoPair;
-                }
+                    ExchangePair maxSellPricePair = thatMarketPair;
+                    ExchangePair minPurchasePricePair = thatMarketPair;
+                    ExchangePair actualPair = new ExchangePair();
+                    
+                    for (int j = i + 1; j < marketsArray.Length; j++)
+                    {
+                        string name = thatMarketPair.pair;
 
-                if (poloniexPair.sellPrice > bittrexPair.sellPrice)
-                {
-                    maxSellPricePair = poloniexPair.sellPrice > exmoPair.sellPrice ? poloniexPair : exmoPair;
-                }
-                else
-                {
-                    maxSellPricePair = bittrexPair.sellPrice > exmoPair.sellPrice ? bittrexPair : exmoPair;
-                }
+                        ExchangePair anotherMarketPair = marketsArray[j].get_pair_by_name(name) ??
+                            marketsArray[j].get_pair_by_name(name.Substring(name.IndexOf('-') + 1) + '-' + name.Substring(0, name.IndexOf('-'))) ??
+                            thatMarketPair;
 
-                if (minPurchasePricePair.purchasePrice < maxSellPricePair.sellPrice)
-                {
-                    actualPair.pair = minPurchasePricePair.pair;
-                    actualPair.purchasePrice = minPurchasePricePair.purchasePrice;
-                    actualPair.sellPrice = maxSellPricePair.sellPrice;
-                    actualPair.stockExchangeBuyer = maxSellPricePair.stockExchangeSeller;
-                    actualPair.stockExchangeSeller = minPurchasePricePair.stockExchangeSeller;
+                        if (maxSellPricePair.sellPrice < anotherMarketPair.sellPrice)
+                        {
+                            maxSellPricePair = anotherMarketPair;
+                        }
+                        if (minPurchasePricePair.purchasePrice > anotherMarketPair.purchasePrice)
+                        {
+                            minPurchasePricePair = anotherMarketPair;
+                        }
 
-                    actualPairs.Add(actualPair);
+                        if (anotherMarketPair != thatMarketPair)
+                        {
+                            marketsArray[j].delete_pair_by_name(anotherMarketPair.pair);
+                        }
+                        
+                    }
+                    
+                    if (minPurchasePricePair.purchasePrice < maxSellPricePair.sellPrice)
+                    {
+                        decimal diff = (maxSellPricePair.sellPrice - minPurchasePricePair.purchasePrice) / maxSellPricePair.sellPrice;
+
+                        actualPair.pair = diff > (decimal)0.1 ? "[WARN] " + minPurchasePricePair.pair : minPurchasePricePair.pair;
+                        actualPair.purchasePrice = minPurchasePricePair.purchasePrice;
+                        actualPair.sellPrice = maxSellPricePair.sellPrice;
+                        actualPair.stockExchangeBuyer = maxSellPricePair.stockExchangeSeller;
+                        actualPair.stockExchangeSeller = minPurchasePricePair.stockExchangeSeller;
+
+                        actualPairs.Add(actualPair);
+                    }
                 }
-
-                
             }
         }
 
@@ -78,7 +79,7 @@ namespace CryptoAnalysator
         {
             foreach (ExchangePair pair in actualPairs)
             {
-                Console.WriteLine($"{pair.pair}: {pair.stockExchangeSeller} > {pair.stockExchangeBuyer}   {pair.purchasePrice} > {pair.sellPrice}");
+                Console.WriteLine($"{pair.pair}: {pair.stockExchangeSeller} >> {pair.stockExchangeBuyer}   {pair.purchasePrice} >> {pair.sellPrice}");
             }
         }
     }

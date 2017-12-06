@@ -28,6 +28,7 @@ namespace CryptoAnalysator
                 pairs.Add(exPair);
             }
 
+
             Console.WriteLine("[INFO] PoloniexMarket is ready");
         }
     }
