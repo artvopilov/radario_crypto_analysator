@@ -55,7 +55,6 @@ namespace CryptoAnalysator
             //}
             using (var webClient = new WebClient())
             {
-                // Выполняем запрос по адресу и получаем ответ в виде строки
                 string response = webClient.DownloadString(url);
                 return response;
             }
