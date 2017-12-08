@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 
 namespace CryptoAnalysator {
     abstract class BasicCryptoMarket {
@@ -27,7 +29,7 @@ namespace CryptoAnalysator {
         public void LoadPairs(string command) {
             _pairs.Clear();
 
-            string response = Program.get_request(_basicUrl + command);
+            string response = GetResponse(_basicUrl + command);
 
             ProcessResponse(response);
         }
@@ -80,6 +82,17 @@ namespace CryptoAnalysator {
 
         public void DeleteCrossByName(string name) {
             _crossRates.Remove(_crossRates.Where(pairEx => pairEx.Pair == name).First());
+        }
+
+        protected string GetResponse(string url) {
+            using (HttpClient client = new HttpClient()) {
+                using (HttpResponseMessage response = client.GetAsync(url).Result) {
+                    using (HttpContent content = response.Content) {
+                        string responseStr = content.ReadAsStringAsync().Result;
+                        return responseStr;
+                    }
+                }
+            }
         }
     }
 }

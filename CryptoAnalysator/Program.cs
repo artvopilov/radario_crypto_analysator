@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net;
 
 
 namespace CryptoAnalysator {
@@ -21,28 +20,6 @@ namespace CryptoAnalysator {
             CA.ShowActualPairs();
 
             Console.ReadKey();
-        }
-
-        public static string get_request(string url) {//async
-            //using (HttpClient client = new HttpClient())
-            //{
-
-            //    using (HttpResponseMessage response = await client.GetAsync(url))
-            //    {
-            //        using (HttpContent content = response.Content)
-            //        {
-            //            string myContent = await content.ReadAsStringAsync();
-            //            //var myContentJson = JObject.Parse(myContent);
-            //            //var myContentJson2 = JsonConvert.DeserializeObject<dynamic>(myContent);                      
-            //            //string attr = myContentJson2.ETH_GAS.id;
-            //            return myContent;
-            //        }
-            //    }
-            //}
-            using (var webClient = new WebClient()) {
-                string response = webClient.DownloadString(url);
-                return response;
-            }
         }
     }
 }

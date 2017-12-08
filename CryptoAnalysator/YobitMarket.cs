@@ -38,7 +38,7 @@ namespace CryptoAnalysator {
         }
 
         string LoadPairsInfo(string name) {
-            string response = Program.get_request(_basicUrl + "ticker/" + name);
+            string response = GetResponse(_basicUrl + "ticker/" + name);
             return response;
         }
     }
