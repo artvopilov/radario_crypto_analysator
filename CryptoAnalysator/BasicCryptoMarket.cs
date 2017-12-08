@@ -1,111 +1,85 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
-namespace CryptoAnalysator
-{
-    abstract class BasicCryptoMarket
-    {
-        protected string basicUrl;
-        protected List<ExchangePair> pairs;
-        protected List<ExchangePair> usdtPairs;
-        protected List<ExchangePair> crossRates;
+namespace CryptoAnalysator {
+    abstract class BasicCryptoMarket {
+        protected readonly string _basicUrl;
+        protected List<ExchangePair> _pairs;
+        protected List<ExchangePair> _usdtPairs;
+        protected List<ExchangePair> _crossRates;
 
-        protected decimal feeTaker;
-        protected decimal feeMaker;
+        public List<ExchangePair> Pairs { get => _pairs; }
+        public List<ExchangePair> СrossRates { get => _crossRates; }
 
-        public BasicCryptoMarket(string url, string command, decimal feeTaker, decimal feeMaker)
-        {
-            pairs = new List<ExchangePair>();
-            usdtPairs = new List<ExchangePair>();
-            crossRates = new List<ExchangePair>();
-            basicUrl = url;
-            load_pairs(command);
-        }
-        
-        // Requests crypto markets
-        public void load_pairs(string command)
-        {
-            pairs.Clear();
+        protected decimal _feeTaker;
+        protected decimal _feeMaker;
 
-            string response = Program.get_request(basicUrl + command);
-
-            process_response(response);
+        public BasicCryptoMarket(string url, string command, decimal feeTaker, decimal feeMaker) {
+            _pairs = new List<ExchangePair>();
+            _usdtPairs = new List<ExchangePair>();
+            _crossRates = new List<ExchangePair>();
+            _basicUrl = url;
+            _feeTaker = feeTaker;
+            _feeMaker = feeMaker;
+            LoadPairs(command);
         }
 
-        protected abstract void process_response(string response);
+        public void LoadPairs(string command) {
+            _pairs.Clear();
 
-        protected void check_add_usdt_pair(ExchangePair pair)
-        {
+            string response = Program.get_request(_basicUrl + command);
+
+            ProcessResponse(response);
+        }
+
+        protected abstract void ProcessResponse(string response);
+
+        protected void CheckAddUsdtPair(ExchangePair pair) {
             char[] signsSplit = { '-' };
-            string[] splitedPair = pair.pair.Split(signsSplit);
+            string[] splitedPair = pair.Pair.Split(signsSplit);
 
-            if (splitedPair[0].ToUpper() == "USDT" || splitedPair[1].ToUpper() == "USDT")
-            {
-                usdtPairs.Add(pair);
+            if (splitedPair[0].ToUpper() == "USDT" || splitedPair[1].ToUpper() == "USDT") {
+                _usdtPairs.Add(pair);
             }
         }
 
-        protected void create_crossRates()
-        {
-            for (int i = 0; i < usdtPairs.Count - 1; i++)
-            {
-                for (int j = i + 1; j < usdtPairs.Count; j++)
-                {
-                    ExchangePair pair1 = usdtPairs[i];
-                    ExchangePair pair2 = usdtPairs[j];
+        protected void CreateCrossRates() {
+            for (int i = 0; i < _usdtPairs.Count - 1; i++) {
+                for (int j = i + 1; j < _usdtPairs.Count; j++) {
+                    ExchangePair pair1 = _usdtPairs[i];
+                    ExchangePair pair2 = _usdtPairs[j];
 
                     ExchangePair crossRatePair = new ExchangePair();
                     char[] signsSplit = { '-' };
-                    string[] splitedPair = pair1.pair.Split(signsSplit);
-                    string[] splitedPair2 = pair2.pair.Split(signsSplit);
+                    string[] splitedPair = pair1.Pair.Split(signsSplit);
+                    string[] splitedPair2 = pair2.Pair.Split(signsSplit);
 
-                    //Console.WriteLine(splitedPair[0]);
+                    if (splitedPair[0] == "USDT" && splitedPair2[0] == "USDT") {
+                        crossRatePair.Pair = splitedPair[1] + '-' + splitedPair2[1];
+                        crossRatePair.SellPrice = pair2.SellPrice / pair1.SellPrice;
+                        crossRatePair.PurchasePrice = pair2.PurchasePrice / pair1.PurchasePrice;
+                        crossRatePair.StockExchangeSeller = pair1.StockExchangeSeller;
 
-                    if (splitedPair[0] == "USDT" && splitedPair2[0] == "USDT")
-                    {
-                        crossRatePair.pair = splitedPair[1] + '-' + splitedPair2[1];
-                        crossRatePair.sellPrice = pair2.sellPrice / pair1.sellPrice;
-                        crossRatePair.purchasePrice = pair2.purchasePrice / pair1.purchasePrice;
-                        crossRatePair.stockExchangeSeller = pair1.stockExchangeSeller;
-
-                        crossRates.Add(crossRatePair);
+                        _crossRates.Add(crossRatePair);
                     }
                 }
             }
         }
 
-        public ExchangePair get_pair_by_name(string name)
-        {
-            return pairs.Find(pairEx => pairEx.pair == name);
+        public ExchangePair GetPairByName(string name) {
+            return _pairs.Find(pairEx => pairEx.Pair == name);
         }
 
-        public ExchangePair get_cross_by_name(string name)
-        {
-            return crossRates.Find(pairEx => pairEx.pair == name);
+        public ExchangePair GetCrossByName(string name) {
+            return _crossRates.Find(pairEx => pairEx.Pair == name);
         }
 
-        public List<ExchangePair> get_all_pairs_info()
-        {
-            return pairs;
+        public void DeletePairByName(string name) {
+            _pairs.Remove(_pairs.Find(pairEx => pairEx.Pair == name));
         }
 
-        public List<ExchangePair> get_cross_rates_info()
-        {
-            return crossRates;
-        }
-
-        public void delete_pair_by_name(string name)
-        {
-            pairs.Remove(pairs.Where(pairEx => pairEx.pair == name).First());
-            //pairs.Remove(pairs.Find(pairEx => pairEx.pair == name))
-        }
-
-        public void delete_cross_by_name(string name)
-        {
-            crossRates.Remove(crossRates.Where(pairEx => pairEx.pair == name).First());
+        public void DeleteCrossByName(string name) {
+            _crossRates.Remove(_crossRates.Where(pairEx => pairEx.Pair == name).First());
         }
     }
 }

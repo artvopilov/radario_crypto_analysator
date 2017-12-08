@@ -1,37 +1,29 @@
 ﻿using System;
 using System.Net;
-using System.Net.Http;
-using System.IO;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.Collections.Generic;
 
 
-namespace CryptoAnalysator
-{
+namespace CryptoAnalysator {
 
-    class Program
-    {
-        static void Main(string[] args)
-        {
+    class Program {
+        static void Main(string[] args) {
 
             PoloniexMarket poloniex = new PoloniexMarket();
             BittrexMarket bittrex = new BittrexMarket();
-            //YobitMarket yobit = new YobitMarket();
+            // Uncomment the line under that to see how much time it will take to load info abt Yobit
+            // YobitMarket yobit = new YobitMarket();
             ExmoMarket exmo = new ExmoMarket();
 
             Console.WriteLine("\n----- Calculating -----\n");
 
             BasicCryptoMarket[] marketsArray = { poloniex, bittrex, exmo };
             PairsListOperator CA = new PairsListOperator();
-            CA.analyse_pairs(marketsArray);
-            CA.show_actual_pairs();
+            CA.AnalysePairs(marketsArray);
+            CA.ShowActualPairs();
 
             Console.ReadKey();
         }
 
-        public static string get_request(string url) //async
-        {
+        public static string get_request(string url) {//async
             //using (HttpClient client = new HttpClient())
             //{
 
@@ -47,8 +39,7 @@ namespace CryptoAnalysator
             //        }
             //    }
             //}
-            using (var webClient = new WebClient())
-            {
+            using (var webClient = new WebClient()) {
                 string response = webClient.DownloadString(url);
                 return response;
             }

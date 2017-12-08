@@ -1,17 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CryptoAnalysator
-{
-    class ExchangePair
-    {
-        public string pair;
-        public string stockExchangeSeller;
-        public string stockExchangeBuyer;
-        public decimal purchasePrice;
-        public decimal sellPrice;
+﻿namespace CryptoAnalysator {
+    class ExchangePair {
+        public string Pair { get; set; }
+        public string StockExchangeSeller { get; set; }
+        public string StockExchangeBuyer { get; set; }
+        public decimal PurchasePrice { get; set; }
+        public decimal SellPrice { get; set; }
     }
 }

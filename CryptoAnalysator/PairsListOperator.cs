@@ -1,127 +1,99 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace CryptoAnalysator
-{
-    class PairsListOperator
-    {
-        List<ExchangePair> actualPairs;
+namespace CryptoAnalysator {
+    class PairsListOperator {
+        List<ExchangePair> _actualPairs;
 
-        public PairsListOperator()
-        {
-            actualPairs = new List<ExchangePair>();
+        public PairsListOperator() {
+            _actualPairs = new List<ExchangePair>();
         }
 
-        public void delete_all_pairs()
-        {
-            actualPairs.Clear();
+        public void DeleteAllActualPairs() {
+            _actualPairs.Clear();
         }
 
-        public void add_pair(ExchangePair pair)
-        {
-            actualPairs.Add(pair);
-        }
-
-        public void analyse_pairs(BasicCryptoMarket[] marketsArray)
-        {
-            for (int i = 0; i < marketsArray.Length - 1; i++)
-            {
-                foreach (ExchangePair thatMarketPair in marketsArray[i].get_all_pairs_info())
-                {
+        public void AnalysePairs(BasicCryptoMarket[] marketsArray) {
+            for (int i = 0; i < marketsArray.Length - 1; i++) {
+                foreach (ExchangePair thatMarketPair in marketsArray[i].Pairs) {
                     ExchangePair maxSellPricePair = thatMarketPair;
                     ExchangePair minPurchasePricePair = thatMarketPair;
                     ExchangePair actualPair = new ExchangePair();
 
-                    for (int j = i + 1; j < marketsArray.Length; j++)
-                    {
-                        string name = thatMarketPair.pair;
-                        ExchangePair anotherMarketPair = marketsArray[j].get_pair_by_name(name) ??
-                            marketsArray[j].get_pair_by_name(name.Substring(name.IndexOf('-') + 1) + '-' + name.Substring(0, name.IndexOf('-'))) ??
+                    for (int j = i + 1; j < marketsArray.Length; j++) {
+                        string name = thatMarketPair.Pair;
+                        ExchangePair anotherMarketPair = marketsArray[j].GetPairByName(name) ??
+                            marketsArray[j].GetPairByName(name.Substring(name.IndexOf('-') + 1) + '-' + name.Substring(0, name.IndexOf('-'))) ??
                             thatMarketPair;
 
-                        if (maxSellPricePair.sellPrice < anotherMarketPair.sellPrice)
-                        {
+                        if (maxSellPricePair.SellPrice < anotherMarketPair.SellPrice) {
                             maxSellPricePair = anotherMarketPair;
                         }
-                        if (minPurchasePricePair.purchasePrice > anotherMarketPair.purchasePrice)
-                        {
+                        if (minPurchasePricePair.PurchasePrice > anotherMarketPair.PurchasePrice) {
                             minPurchasePricePair = anotherMarketPair;
                         }
 
-                        if (anotherMarketPair != thatMarketPair)
-                        {
-                            marketsArray[j].delete_pair_by_name(anotherMarketPair.pair);
+                        if (anotherMarketPair != thatMarketPair) {
+                            marketsArray[j].DeletePairByName(anotherMarketPair.Pair);
                         }
 
                     }
 
-                    if (minPurchasePricePair.purchasePrice < maxSellPricePair.sellPrice)
-                    {
-                        decimal diff = (maxSellPricePair.sellPrice - minPurchasePricePair.purchasePrice) / maxSellPricePair.sellPrice;
+                    if (minPurchasePricePair.PurchasePrice < maxSellPricePair.SellPrice) {
+                        decimal diff = (maxSellPricePair.SellPrice - minPurchasePricePair.PurchasePrice) / maxSellPricePair.SellPrice;
 
-                        actualPair.pair = diff > (decimal)0.1 ? "[WARN] " + minPurchasePricePair.pair : minPurchasePricePair.pair;
-                        actualPair.purchasePrice = minPurchasePricePair.purchasePrice;
-                        actualPair.sellPrice = maxSellPricePair.sellPrice;
-                        actualPair.stockExchangeBuyer = maxSellPricePair.stockExchangeSeller;
-                        actualPair.stockExchangeSeller = minPurchasePricePair.stockExchangeSeller;
+                        actualPair.Pair = diff > (decimal)0.1 ? "[WARN] " + minPurchasePricePair.Pair : minPurchasePricePair.Pair;
+                        actualPair.PurchasePrice = minPurchasePricePair.PurchasePrice;
+                        actualPair.SellPrice = maxSellPricePair.SellPrice;
+                        actualPair.StockExchangeBuyer = maxSellPricePair.StockExchangeSeller;
+                        actualPair.StockExchangeSeller = minPurchasePricePair.StockExchangeSeller;
 
-                        actualPairs.Add(actualPair);
+                        _actualPairs.Add(actualPair);
                     }
                 }
 
-                foreach (ExchangePair thatMarketPair in marketsArray[i].get_cross_rates_info())
-                {
+                foreach (ExchangePair thatMarketPair in marketsArray[i].СrossRates) {
                     ExchangePair maxSellPricePair = thatMarketPair;
                     ExchangePair minPurchasePricePair = thatMarketPair;
                     ExchangePair actualPair = new ExchangePair();
 
-                    for (int j = i + 1; j < marketsArray.Length; j++)
-                    {
-                        string name = thatMarketPair.pair;
-                        ExchangePair anotherMarketPair = marketsArray[j].get_cross_by_name(name) ??
-                            marketsArray[j].get_cross_by_name(name.Substring(name.IndexOf('-') + 1) + '-' + name.Substring(0, name.IndexOf('-'))) ??
+                    for (int j = i + 1; j < marketsArray.Length; j++) {
+                        string name = thatMarketPair.Pair;
+                        ExchangePair anotherMarketPair = marketsArray[j].GetCrossByName(name) ??
+                            marketsArray[j].GetCrossByName(name.Substring(name.IndexOf('-') + 1) + '-' + name.Substring(0, name.IndexOf('-'))) ??
                             thatMarketPair;
 
-                        if (maxSellPricePair.sellPrice < anotherMarketPair.sellPrice)
-                        {
+                        if (maxSellPricePair.SellPrice < anotherMarketPair.SellPrice) {
                             maxSellPricePair = anotherMarketPair;
                         }
-                        if (minPurchasePricePair.purchasePrice > anotherMarketPair.purchasePrice)
-                        {
+                        if (minPurchasePricePair.PurchasePrice > anotherMarketPair.PurchasePrice) {
                             minPurchasePricePair = anotherMarketPair;
                         }
 
-                        if (anotherMarketPair != thatMarketPair)
-                        {
-                            marketsArray[j].delete_cross_by_name(anotherMarketPair.pair);
+                        if (anotherMarketPair != thatMarketPair) {
+                            marketsArray[j].DeleteCrossByName(anotherMarketPair.Pair);
                         }
 
                     }
 
-                    if (minPurchasePricePair.purchasePrice < maxSellPricePair.sellPrice)
-                    {
-                        decimal diff = (maxSellPricePair.sellPrice - minPurchasePricePair.purchasePrice) / maxSellPricePair.sellPrice;
+                    if (minPurchasePricePair.PurchasePrice < maxSellPricePair.SellPrice) {
+                        decimal diff = (maxSellPricePair.SellPrice - minPurchasePricePair.PurchasePrice) / maxSellPricePair.SellPrice;
 
-                        actualPair.pair = diff > (decimal)0.1 ? "[CROSS][WARN] " + minPurchasePricePair.pair : "[CROSS] " + minPurchasePricePair.pair;
-                        actualPair.purchasePrice = minPurchasePricePair.purchasePrice;
-                        actualPair.sellPrice = maxSellPricePair.sellPrice;
-                        actualPair.stockExchangeBuyer = maxSellPricePair.stockExchangeSeller;
-                        actualPair.stockExchangeSeller = minPurchasePricePair.stockExchangeSeller;
+                        actualPair.Pair = diff > (decimal)0.1 ? "[CROSS][WARN] " + minPurchasePricePair.Pair : "[CROSS] " + minPurchasePricePair.Pair;
+                        actualPair.PurchasePrice = minPurchasePricePair.PurchasePrice;
+                        actualPair.SellPrice = maxSellPricePair.SellPrice;
+                        actualPair.StockExchangeBuyer = maxSellPricePair.StockExchangeSeller;
+                        actualPair.StockExchangeSeller = minPurchasePricePair.StockExchangeSeller;
 
-                        actualPairs.Add(actualPair);
+                        _actualPairs.Add(actualPair);
                     }
                 }
             }
         }
 
-        public void show_actual_pairs()
-        {
-            foreach (ExchangePair pair in actualPairs)
-            {
-                Console.WriteLine($"{pair.pair}: {pair.stockExchangeSeller} >> {pair.stockExchangeBuyer}   {pair.purchasePrice} >> {pair.sellPrice}");
+        public void ShowActualPairs() {
+            foreach (ExchangePair pair in _actualPairs) {
+                Console.WriteLine($"{pair.Pair}: {pair.StockExchangeSeller} >> {pair.StockExchangeBuyer}   {pair.PurchasePrice} >> {pair.SellPrice}");
             }
         }
     }

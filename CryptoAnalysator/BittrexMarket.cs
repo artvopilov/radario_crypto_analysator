@@ -1,35 +1,28 @@
 ﻿using System;
-using System.Linq;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Collections.Generic;
 
-namespace CryptoAnalysator
-{
-    class BittrexMarket : BasicCryptoMarket
-    {
+
+namespace CryptoAnalysator {
+    class BittrexMarket : BasicCryptoMarket {
         public BittrexMarket(string url = "https://bittrex.com/api/v1.1/public/", string command = "getmarketsummaries",
-            decimal feeTaker = (decimal)0.0025, decimal feeMaker = (decimal)0.0025) : base(url, command, feeTaker, feeMaker)
-        {
+            decimal feeTaker = (decimal)0.0025, decimal feeMaker = (decimal)0.0025) : base(url, command, feeTaker, feeMaker) {
         }
 
-        protected override void process_response(string response)
-        {
+        protected override void ProcessResponse(string response) {
             var responseJSON = JObject.Parse(response)["result"];
 
-            foreach (JObject pair in responseJSON)
-            {
+            foreach (JObject pair in responseJSON) {
                 ExchangePair exPair = new ExchangePair();
-                exPair.pair = (string)pair["MarketName"];
-                exPair.purchasePrice = (decimal)pair["Ask"] * (1 + feeTaker);
-                exPair.sellPrice = (decimal)pair["Bid"] * (1 - feeMaker);
-                exPair.stockExchangeSeller = "Bittrex";
+                exPair.Pair = (string)pair["MarketName"];
+                exPair.PurchasePrice = (decimal)pair["Ask"] * (1 + _feeTaker);
+                exPair.SellPrice = (decimal)pair["Bid"] * (1 - _feeMaker);
+                exPair.StockExchangeSeller = "Bittrex";
 
-                pairs.Add(exPair);
-                check_add_usdt_pair(exPair);
+                _pairs.Add(exPair);
+                CheckAddUsdtPair(exPair);
             }
 
-            create_crossRates();
+            CreateCrossRates();
             Console.WriteLine("[INFO] BittrexMarket is ready");
         }
     }

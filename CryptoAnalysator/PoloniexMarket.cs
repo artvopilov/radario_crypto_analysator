@@ -1,36 +1,28 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 
-namespace CryptoAnalysator
-{
-    class PoloniexMarket : BasicCryptoMarket
-    {
+
+namespace CryptoAnalysator {
+    class PoloniexMarket : BasicCryptoMarket {
         public PoloniexMarket(string url = "https://poloniex.com/public?command=", string command = "returnTicker", 
-            decimal feeTaker = (decimal)0.0025, decimal feeMaker = (decimal)0.0015) : base(url, command, feeTaker, feeMaker)
-        {
+            decimal feeTaker = (decimal)0.0025, decimal feeMaker = (decimal)0.0015) : base(url, command, feeTaker, feeMaker) {
         }
 
-        protected override void process_response(string response)
-        {
+        protected override void ProcessResponse(string response) {
             var responseJSON = JObject.Parse(response);
 
-            foreach (var pair in responseJSON)
-            {
+            foreach (var pair in responseJSON) {
                 ExchangePair exPair = new ExchangePair();
-                exPair.pair = (string)pair.Key.Replace('_', '-');
-                exPair.purchasePrice = (decimal)pair.Value["lowestAsk"] * (1 + feeTaker);
-                exPair.sellPrice = (decimal)pair.Value["highestBid"] * (1 - feeMaker);
-                exPair.stockExchangeSeller = "Poloniex";
+                exPair.Pair = (string)pair.Key.Replace('_', '-');
+                exPair.PurchasePrice = (decimal)pair.Value["lowestAsk"] * (1 + _feeTaker);
+                exPair.SellPrice = (decimal)pair.Value["highestBid"] * (1 - _feeMaker);
+                exPair.StockExchangeSeller = "Poloniex";
 
-                pairs.Add(exPair);
-                check_add_usdt_pair(exPair);
+                _pairs.Add(exPair);
+                CheckAddUsdtPair(exPair);
             }
 
-            create_crossRates();
+            CreateCrossRates();
             Console.WriteLine("[INFO] PoloniexMarket is ready");
         }
     }
