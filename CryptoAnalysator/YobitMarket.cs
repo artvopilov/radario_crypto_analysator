@@ -9,7 +9,6 @@ namespace CryptoAnalysator {
 
         protected override void ProcessResponse(string response) {
             var responseJSON = JObject.Parse(response)["pairs"].Value<JObject>();
-            //string request = "";
 
             Console.Write("[INFO] YobitMarket is loading:  ");
             int count = 0;
@@ -28,10 +27,7 @@ namespace CryptoAnalysator {
                 if (count % 10 == 0) {
                     Console.Write('>');
                 }
-                //request += pair.Key + '-';
             }
-            //request = request.Remove(request.Length - 1, 1);
-            //Console.WriteLine(load_pair_info(request));
             CreateCrossRates();
             Console.Write('\n');
             Console.WriteLine("[INFO] YobitMarket is ready");

@@ -16,8 +16,8 @@ namespace CryptoAnalysator {
 
             BasicCryptoMarket[] marketsArray = { poloniex, bittrex, exmo };
             PairsListOperator CA = new PairsListOperator();
-            CA.AnalysePairs(marketsArray);
-            CA.ShowActualPairs();
+            CA.FindActualPairsAndCrossRates(marketsArray);
+            CA.ShowActualPairsAndCrossRates();
 
             Console.ReadKey();
         }

@@ -53,16 +53,28 @@ namespace CryptoAnalysator {
 
                     ExchangePair crossRatePair = new ExchangePair();
                     char[] signsSplit = { '-' };
-                    string[] splitedPair = pair1.Pair.Split(signsSplit);
+                    string[] splitedPair1 = pair1.Pair.Split(signsSplit);
                     string[] splitedPair2 = pair2.Pair.Split(signsSplit);
 
-                    if (splitedPair[0] == "USDT" && splitedPair2[0] == "USDT") {
-                        crossRatePair.Pair = splitedPair[1] + '-' + splitedPair2[1];
-                        crossRatePair.SellPrice = pair2.SellPrice / pair1.SellPrice;
-                        crossRatePair.PurchasePrice = pair2.PurchasePrice / pair1.PurchasePrice;
+                    if (splitedPair1[0] == "USDT" && splitedPair2[0] == "USDT") {
+                        crossRatePair.Pair = splitedPair1[1] + '-' + splitedPair2[1];
+                        crossRatePair.SellPrice = pair2.SellPrice / pair1.PurchasePrice; 
+                        crossRatePair.PurchasePrice = 1 / (pair1.SellPrice / pair2.PurchasePrice);
                         crossRatePair.StockExchangeSeller = pair1.StockExchangeSeller;
+                        //if (pair1.Pair == "USDT-DASH") {
+                        //    Console.WriteLine($"{pair1.PurchasePrice}, {crossRatePair.SellPrice}, {pair2.PurchasePrice}, {pair2.SellPrice}, {pair1.Pair}, {pair2.Pair}");
+                        //}
 
                         _crossRates.Add(crossRatePair);
+                    } else {
+                        if (splitedPair1[1] == "USDT" && splitedPair2[1] == "USDT") {
+                            crossRatePair.Pair = splitedPair1[0] + '-' + splitedPair2[0];
+                            crossRatePair.SellPrice = (pair2.SellPrice / pair1.PurchasePrice);
+                            crossRatePair.PurchasePrice = 1 / (pair1.SellPrice / pair2.PurchasePrice);
+                            crossRatePair.StockExchangeSeller = pair1.StockExchangeSeller;
+
+                            _crossRates.Add(crossRatePair);
+                        }
                     }
                 }
             }
