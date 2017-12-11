@@ -12,9 +12,12 @@ namespace CryptoAnalysator {
 
             foreach (var pair in responseJSON) {
                 ExchangePair exPair = new ExchangePair();
-                exPair.Pair = (string)pair.Key.Replace('_', '-');
-                exPair.PurchasePrice = (decimal)pair.Value["sell_price"] * (1 + _feeTaker);
-                exPair.SellPrice = (decimal)pair.Value["buy_price"] * (1 - _feeMaker);
+                char[] signsSplit = { '_' };
+                string[] splitedPair = pair.Key.Split(signsSplit);
+                exPair.Pair = splitedPair[1] + '-' + splitedPair[0];
+
+                exPair.PurchasePrice = ((decimal)pair.Value["sell_price"]) * (1 + _feeTaker);
+                exPair.SellPrice = ((decimal)pair.Value["buy_price"]) * (1 - _feeMaker);
                 exPair.StockExchangeSeller = "Exmo";
 
                 _pairs.Add(exPair);
